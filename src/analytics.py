@@ -8,11 +8,17 @@ def load_data():
 
 
 def top_market_cap(df):
-    top10 = df.nlargest(10, "market_cap")
+    top10 = df.nlargest(10, "market_cap").copy()
 
-    plt.figure(figsize=(10, 6))
-    sns.barplot(
-        x="market_cap",
+    # Conversion en milliards USD
+    top10["market_cap_billions"] = (
+        top10["market_cap"] / 1_000_000_000
+    )
+
+    plt.figure(figsize=(12, 6))
+
+    ax = sns.barplot(
+        x="market_cap_billions",
         y="name",
         hue="name",
         data=top10,
@@ -20,12 +26,30 @@ def top_market_cap(df):
         legend=False
     )
 
-    plt.title("Top 10 Cryptocurrencies by Market Cap")
-    plt.xlabel("Market Cap")
-    plt.ylabel("Cryptocurrency")
+    plt.title(
+        "Top Cryptocurrencies by Market Capitalization",
+        fontsize=16,
+        fontweight="bold"
+    )
+
+    plt.xlabel("Market Cap (Billion USD)")
+    plt.ylabel("")
+
+    for container in ax.containers:
+        ax.bar_label(
+            container,
+            fmt="%.1f",
+            padding=3
+        )
+    
+    plt.grid(axis="x", linestyle="--", alpha=0.4)
     plt.tight_layout()
 
-    plt.savefig("reports/top_marketcap.png")
+    plt.savefig(
+        "reports/top_marketcap.png",
+        dpi=300
+    )
+
     plt.close()
 
 
@@ -33,11 +57,11 @@ def top_gainers(df):
     top = df.nlargest(
         10,
         "price_change_percentage_24h"
-    )
+    ).copy()
 
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(12, 6))
 
-    sns.barplot(
+    ax = sns.barplot(
         x="price_change_percentage_24h",
         y="name",
         hue="name",
@@ -46,17 +70,35 @@ def top_gainers(df):
         legend=False
     )
 
-    plt.title("Top 10 Gainers (24h)")
+    plt.title(
+        "Top 10 Gainers (24h)",
+        fontsize=16,
+        fontweight="bold"
+    )
+
     plt.xlabel("24h Change (%)")
-    plt.ylabel("Cryptocurrency")
+    plt.ylabel("")
+
+    for container in ax.containers:
+        ax.bar_label(
+            container,
+            fmt="%.2f%%",
+            padding=3
+        )
+
     plt.tight_layout()
 
-    plt.savefig("reports/top_gainers.png")
+    plt.savefig(
+        "reports/top_gainers.png",
+        dpi=300
+    )
+
     plt.close()
 
 
 if __name__ == "__main__":
     df = load_data()
+
     top_market_cap(df)
     top_gainers(df)
 
