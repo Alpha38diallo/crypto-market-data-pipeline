@@ -86,6 +86,12 @@ def top_gainers(df):
             padding=3
         )
 
+    ax.grid(
+        axis="x",
+        linestyle="--",
+        alpha=0.4
+    )
+    
     plt.tight_layout()
 
     plt.savefig(
